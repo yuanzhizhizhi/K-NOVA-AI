@@ -1,14 +1,20 @@
 package com.knova.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
 import java.time.Instant;
 
-/** 一次可继续追问的知识库对话。 */
+/**
+ * 一次可继续追问的知识库对话。
+ */
 @Data
 @TableName("chat_conversation")
 public class ChatConversation {
-    @TableId(type = IdType.AUTO) private Long id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
     private Long knowledgeBaseId;
     private String username;
     private String title;

@@ -1,20 +1,25 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from '../api';
-import { ArrowRight, BookOpen, CheckCircle2 } from 'lucide-vue-next';
+import { ArrowRight, CheckCircle2 } from 'lucide-vue-next';
 const username = ref('admin'), password = ref('admin123'), loading = ref(false), error = ref(''), router = useRouter();
 async function login() { loading.value = true; error.value = ''; try {
     const { data } = await api.post('/auth/login', { username: username.value, password: password.value });
     localStorage.setItem('token', data.token);
     localStorage.setItem('name', data.name);
+    localStorage.setItem('role', data.role);
+    if (data.avatarUrl)
+        localStorage.setItem('avatarUrl', data.avatarUrl);
+    else
+        localStorage.removeItem('avatarUrl');
     router.push('/');
 }
 catch {
-    error.value = '用户名或密码错误，请重试';
+    error.value = '用户名或密码错误，或账号已被禁用';
 }
 finally {
     loading.value = false;
-} } // @ts-ignore
+} }
 const __VLS_ctx = {
     ...{},
     ...{},
@@ -35,19 +40,16 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
 });
 /** @type {__VLS_StyleScopedClasses['brand']} */ ;
 __VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({
-    ...{ class: "brand-mark" },
+    ...{ class: "brand-mark ggbond-logo" },
 });
 /** @type {__VLS_StyleScopedClasses['brand-mark']} */ ;
-let __VLS_0;
-/** @ts-ignore @type { | typeof __VLS_components.BookOpen} */
-BookOpen;
-// @ts-ignore
-const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
-    size: (20),
-}));
-const __VLS_2 = __VLS_1({
-    size: (20),
-}, ...__VLS_functionalComponentArgsRest(__VLS_1));
+/** @type {__VLS_StyleScopedClasses['ggbond-logo']} */ ;
+__VLS_asFunctionalElement1(__VLS_intrinsics.img)({
+    src: "/ggbond-logo.jpg",
+    alt: "GGBOND logo",
+});
+__VLS_asFunctionalElement1(__VLS_intrinsics.span, __VLS_intrinsics.span)({});
+__VLS_asFunctionalElement1(__VLS_intrinsics.small, __VLS_intrinsics.small)({});
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "story-copy" },
 });
@@ -62,6 +64,13 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.em, __VLS_intrinsics.em)({});
 __VLS_asFunctionalElement1(__VLS_intrinsics.p, __VLS_intrinsics.p)({});
 __VLS_asFunctionalElement1(__VLS_intrinsics.ul, __VLS_intrinsics.ul)({});
 __VLS_asFunctionalElement1(__VLS_intrinsics.li, __VLS_intrinsics.li)({});
+let __VLS_0;
+/** @ts-ignore @type { | typeof __VLS_components.CheckCircle2} */
+CheckCircle2;
+// @ts-ignore
+const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({}));
+const __VLS_2 = __VLS_1({}, ...__VLS_functionalComponentArgsRest(__VLS_1));
+__VLS_asFunctionalElement1(__VLS_intrinsics.li, __VLS_intrinsics.li)({});
 let __VLS_5;
 /** @ts-ignore @type { | typeof __VLS_components.CheckCircle2} */
 CheckCircle2;
@@ -75,13 +84,14 @@ CheckCircle2;
 // @ts-ignore
 const __VLS_11 = __VLS_asFunctionalComponent1(__VLS_10, new __VLS_10({}));
 const __VLS_12 = __VLS_11({}, ...__VLS_functionalComponentArgsRest(__VLS_11));
-__VLS_asFunctionalElement1(__VLS_intrinsics.li, __VLS_intrinsics.li)({});
-let __VLS_15;
-/** @ts-ignore @type { | typeof __VLS_components.CheckCircle2} */
-CheckCircle2;
-// @ts-ignore
-const __VLS_16 = __VLS_asFunctionalComponent1(__VLS_15, new __VLS_15({}));
-const __VLS_17 = __VLS_16({}, ...__VLS_functionalComponentArgsRest(__VLS_16));
+__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
+    ...{ class: "login-mascot" },
+});
+/** @type {__VLS_StyleScopedClasses['login-mascot']} */ ;
+__VLS_asFunctionalElement1(__VLS_intrinsics.img)({
+    src: "/ggbond-logo.jpg",
+    alt: "GGBOND AI mascot",
+});
 __VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
     ...{ class: "orbit orbit-a" },
 });
@@ -139,16 +149,16 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
 /** @type {__VLS_StyleScopedClasses['primary']} */ ;
 /** @type {__VLS_StyleScopedClasses['login-btn']} */ ;
 (__VLS_ctx.loading ? '正在验证...' : '进入工作台');
-let __VLS_20;
+let __VLS_15;
 /** @ts-ignore @type { | typeof __VLS_components.ArrowRight} */
 ArrowRight;
 // @ts-ignore
-const __VLS_21 = __VLS_asFunctionalComponent1(__VLS_20, new __VLS_20({
+const __VLS_16 = __VLS_asFunctionalComponent1(__VLS_15, new __VLS_15({
     size: (18),
 }));
-const __VLS_22 = __VLS_21({
+const __VLS_17 = __VLS_16({
     size: (18),
-}, ...__VLS_functionalComponentArgsRest(__VLS_21));
+}, ...__VLS_functionalComponentArgsRest(__VLS_16));
 __VLS_asFunctionalElement1(__VLS_intrinsics.p, __VLS_intrinsics.p)({
     ...{ class: "hint" },
 });

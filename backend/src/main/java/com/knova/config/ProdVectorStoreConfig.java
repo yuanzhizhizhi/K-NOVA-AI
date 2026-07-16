@@ -6,9 +6,13 @@ import dev.langchain4j.store.embedding.milvus.MilvusEmbeddingStore;
 import io.milvus.param.IndexType;
 import io.milvus.param.MetricType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
-/** 正式环境向量库：连接独立 Milvus 服务。 */
+/**
+ * 正式环境向量库：连接独立 Milvus 服务。
+ */
 @Configuration
 @Profile("prod")
 public class ProdVectorStoreConfig {

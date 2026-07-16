@@ -1,18 +1,24 @@
 package com.knova.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.knova.domain.*;
-import com.knova.repository.*;
+import com.knova.domain.ChatConversation;
+import com.knova.domain.ChatMessage;
+import com.knova.repository.ChatConversationMapper;
+import com.knova.repository.ChatMessageMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.time.Instant;
 import java.util.List;
 
-/** 对话及消息持久化业务，按当前登录用户隔离数据。 */
-@Service @RequiredArgsConstructor
+/**
+ * 对话及消息持久化业务，按当前登录用户隔离数据。
+ */
+@Service
+@RequiredArgsConstructor
 public class ConversationService {
     private final ChatConversationMapper conversations;
     private final ChatMessageMapper messages;
@@ -42,9 +48,16 @@ public class ConversationService {
 
     public void addMessage(Long conversationId, String role, String content) {
         ChatMessage message = new ChatMessage();
-        message.setConversationId(conversationId); message.setRole(role); message.setContent(content);
+        message.setConversationId(conversationId);
+        message.setRole(role);
+        message.setContent(content);
         messages.insert(message);
         ChatConversation conversation = conversations.selectById(conversationId);
+        // 空白对话在第一次提问后自动使用问题摘要作为标题。
+        if ("user".equals(role) && "新对话".equals(conversation.getTitle()) && content != null && !content.isBlank()) {
+            String title = content.trim();
+            conversation.setTitle(title.substring(0, Math.min(title.length(), 40)));
+        }
         conversation.setUpdatedAt(Instant.now());
         conversations.updateById(conversation);
     }
@@ -56,7 +69,9 @@ public class ConversationService {
         conversations.deleteById(conversationId);
     }
 
-    /** 删除知识库时同步清理其全部用户的历史对话。 */
+    /**
+     * 删除知识库时同步清理其全部用户的历史对话。
+     */
     @Transactional
     public void deleteByKnowledgeBase(Long knowledgeBaseId) {
         List<ChatConversation> values = conversations.selectList(Wrappers.<ChatConversation>lambdaQuery()

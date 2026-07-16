@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-/** 系统用户实体。password 仅保存 BCrypt 哈希，不保存明文密码。 */
+/**
+ * 系统用户实体。password 仅保存 BCrypt 哈希，不保存明文密码。
+ */
 @Data
 @TableName("app_users")
 public class User {
@@ -15,4 +17,6 @@ public class User {
     private String password;
     private String displayName;
     private String role = "ADMIN";
+    private boolean enabled = true;
+    private String avatarUrl;
 }
