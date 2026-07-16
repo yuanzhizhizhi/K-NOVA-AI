@@ -1,0 +1,35 @@
+# Java
+backend/target/
+*.class
+
+# Maven
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+logs/
+*.log
+
+# Spring
+application-local.yml
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Environment
+.env
+.env.*
+
+# AI vector data
+backend/data/
+*.db
+
+# OS
+.DS_Store
+Thumbs.db

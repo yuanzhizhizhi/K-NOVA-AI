@@ -1,0 +1,13 @@
+# 正式环境：关系数据使用 MySQL，向量数据连接独立 Milvus 服务。
+spring:
+  config.activate.on-profile: prod
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/knova?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
+    username: ${DB_USER:knova}
+    password: ${DB_PASSWORD:}
+
+app:
+  milvus:
+    host: ${MILVUS_HOST:localhost}
+    port: ${MILVUS_PORT:19530}
+    collection: ${MILVUS_COLLECTION:knova_segments_bge_m3}

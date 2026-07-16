@@ -1,0 +1,11 @@
+# 本地开发环境：无需启动 Milvus，向量保存在本地 JSON 文件中。
+spring:
+  config.activate.on-profile: dev
+  datasource:
+    url: ${DB_URL:jdbc:h2:file:./data/knova;MODE=MySQL}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:}
+
+app:
+  vector:
+    local-file: ${LOCAL_VECTOR_FILE:./data/local-vector-bge-m3.json}
