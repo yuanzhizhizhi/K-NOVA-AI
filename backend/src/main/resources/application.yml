@@ -1,31 +1,83 @@
+# Spring Boot 通用配置，开发和生产环境都会加载本文件。
 spring:
+  # 应用名称，用于日志、监控和 Spring 上下文标识。
   application.name: knova
   profiles:
+    # 未通过 SPRING_PROFILES_ACTIVE 指定环境时，默认使用本地开发配置。
     default: dev
   sql.init:
+    # 每次启动都检查并执行初始化脚本；schema.sql 使用 IF NOT EXISTS，允许重复执行。
     mode: always
+    # 关系型数据库表结构初始化脚本的位置。
     schema-locations: classpath:schema.sql
   servlet.multipart:
+    # 单个上传文件的最大体积，超过限制时 Spring 会在进入 Controller 前拒绝请求。
     max-file-size: 30MB
+    # 单次 multipart 请求的最大总体积，包含文件内容和其他表单字段。
     max-request-size: 30MB
-server.port: ${SERVER_PORT:8080}
+
+server:
+  # HTTP 服务监听端口；可通过 SERVER_PORT 环境变量覆盖，默认 8080。
+  port: ${SERVER_PORT:8080}
+
 logging:
-  file.path: ${LOG_PATH:./logs}
+  file:
+    # 日志文件输出目录；生产环境建议映射到独立持久化磁盘。
+    path: ${LOG_PATH:./logs}
+
+# K-NOVA-AI 自定义业务配置。
 app:
+  # JWT 签名密钥，用于签发和校验登录令牌；生产环境必须通过 JWT_SECRET 设置强随机值。
   jwt-secret: ${JWT_SECRET:change-this-development-secret-to-at-least-32-bytes}
   ai:
+    # 对话模型配置，用于 RAG 最终回答和不确定消息的意图分类。
     chat:
-      api-key: ${DEEPSEEK_API_KEY:KEY}
+      # DeepSeek API 密钥；生产环境必须使用环境变量，禁止提交真实密钥。
+      api-key: ${DEEPSEEK_API_KEY:**************}
+      # DeepSeek OpenAI 兼容接口地址，一般不需要追加具体接口路径。
       base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com}
+      # RAG 最终回答使用的聊天模型名称。
       model: ${DEEPSEEK_CHAT_MODEL:deepseek-v4-pro}
+      # 意图分类模型；默认复用聊天模型，也可配置成本更低、响应更快的模型。
+      intent-model: ${AI_INTENT_MODEL:${DEEPSEEK_CHAT_MODEL:deepseek-v4-pro}}
+    # 文本向量模型配置，文档切片和用户问题必须使用相同模型及维度。
     embedding:
+      # OpenAI 兼容接口要求的 API Key；本地 Ollama 默认接受任意非空值。
       api-key: ${EMBEDDING_API_KEY:ollama}
+      # 向量模型接口地址；默认连接本机 Ollama 的 OpenAI 兼容端点。
       base-url: ${EMBEDDING_BASE_URL:http://localhost:11434/v1}
+      # Embedding 模型名称；bge-m3 默认输出 1024 维向量。
       model: ${AI_EMBEDDING_MODEL:bge-m3}
+      # 向量维度，必须与 Embedding 模型输出及 Milvus Collection 维度完全一致。
       dimension: ${AI_EMBEDDING_DIMENSION:1024}
-management.endpoints.web.exposure.include: health,info
+  # 对话意图路由和 RAG 召回参数。
+  chat-routing:
+    # 是否启用闲聊、帮助、知识问答意图路由；关闭后所有问题直接进入知识问答。
+    enabled: ${CHAT_ROUTING_ENABLED:true}
+    # 本地规则无法判断时是否调用 LLM 分类；关闭后不确定问题按 KNOWLEDGE 处理。
+    model-fallback-enabled: ${CHAT_INTENT_MODEL_FALLBACK_ENABLED:true}
+    # 单次用户问题允许的最大字符数，超过后返回 400 业务异常。
+    max-question-length: ${CHAT_MAX_QUESTION_LENGTH:4000}
+    # 意图模型调用超时时间，单位为秒；超时后自动降级为 KNOWLEDGE。
+    intent-timeout-seconds: ${CHAT_INTENT_TIMEOUT_SECONDS:5}
+    # RAG 向量相似度最低阈值，低于此分数的文档片段不会进入候选结果。
+    rag-min-score: ${RAG_MIN_SCORE:0.55}
+    # 每个知识库单独召回的最大文档片段数量。
+    rag-max-results-per-base: ${RAG_MAX_RESULTS_PER_BASE:6}
+    # 汇总多个知识库结果后，最终提供给聊天模型的最大片段数量。
+    rag-final-top-k: ${RAG_FINAL_TOP_K:8}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # 对外开放的 Actuator 端点：health 用于健康检查，info 用于应用信息。
+        include: health,info
+
 mybatis-plus:
   configuration:
+    # 自动把数据库下划线字段名映射为 Java 小驼峰属性名。
     map-underscore-to-camel-case: true
   global-config:
+    # 关闭 MyBatis-Plus 启动 Banner，减少无业务价值的控制台输出。
     banner: false

@@ -1,11 +1,18 @@
-# 本地开发环境：无需启动 Milvus，向量保存在本地 JSON 文件中。
+# 本地开发环境配置：关系数据使用文件型 H2，向量数据使用本地 JSON 文件。
 spring:
-  config.activate.on-profile: dev
+  config:
+    activate:
+      # 仅在 dev Profile 激活时加载本文件。
+      on-profile: dev
   datasource:
+    # H2 文件数据库地址；MODE=MySQL 让部分 SQL 语法尽量兼容 MySQL。
     url: ${DB_URL:jdbc:h2:file:./data/knova;MODE=MySQL}
+    # H2 数据库用户名，可通过 DB_USER 环境变量覆盖。
     username: ${DB_USER:sa}
+    # H2 数据库密码；本地默认空密码，不能用于生产环境。
     password: ${DB_PASSWORD:}
 
 app:
   vector:
+    # 本地向量库持久化文件；文件内容与配置的 Embedding 模型及维度绑定。
     local-file: ${LOCAL_VECTOR_FILE:./data/local-vector-bge-m3.json}

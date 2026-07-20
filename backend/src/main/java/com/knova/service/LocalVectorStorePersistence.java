@@ -22,6 +22,8 @@ public class LocalVectorStorePersistence implements VectorStorePersistence {
 
     @Override
     public synchronized void persist() {
+        // 1. 把配置路径转换为规范化绝对路径。
+        // 2. 将完整内存向量索引序列化到本地文件。
         embeddingStore.serializeToFile(Path.of(file).toAbsolutePath().normalize());
     }
 }

@@ -1,13 +1,22 @@
-# 正式环境：关系数据使用 MySQL，向量数据连接独立 Milvus 服务。
+# 正式环境配置：关系数据使用 MySQL，向量数据连接独立 Milvus 服务。
 spring:
-  config.activate.on-profile: prod
+  config:
+    activate:
+      # 仅在 prod Profile 激活时加载本文件。
+      on-profile: prod
   datasource:
+    # MySQL JDBC 地址；正式部署建议通过 DB_URL 指向实际数据库实例。
     url: ${DB_URL:jdbc:mysql://localhost:3306/knova?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai}
+    # MySQL 登录用户名，生产环境通过 DB_USER 注入。
     username: ${DB_USER:knova}
+    # MySQL 登录密码，生产环境必须通过 DB_PASSWORD 注入，禁止在文件中设置明文默认值。
     password: ${DB_PASSWORD:}
 
 app:
   milvus:
+    # Milvus 服务主机名或 IP 地址。
     host: ${MILVUS_HOST:localhost}
+    # Milvus gRPC 服务端口，默认端口为 19530。
     port: ${MILVUS_PORT:19530}
+    # 存放知识库切片向量的 Collection 名称；名称中标注当前使用 bge-m3 模型。
     collection: ${MILVUS_COLLECTION:knova_segments_bge_m3}
